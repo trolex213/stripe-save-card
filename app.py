@@ -18,7 +18,7 @@ DOMAIN = os.getenv('DOMAIN')
 
 @app.route('/', methods=['GET'])
 def home():
-    return '<h1>Stripe Save Card Demo</h1><a href="/create-checkout-session">Save Card</a>'
+    return '<h1>Reserve Your Spot!</h1><a href="/create-checkout-session">Save Your Spot</a>'
 
 @app.route('/create-checkout-session', methods=['GET'])
 def create_checkout_session():
