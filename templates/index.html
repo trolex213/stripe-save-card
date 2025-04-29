@@ -10,23 +10,33 @@
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #f2f2f2, #e6e6e6);
-      background-size: 400% 400%;
-      animation: gradientShift 10s ease infinite;
       font-family: 'Inter', sans-serif;
       height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      background: #f0f0f0;
     }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .grid-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+      z-index: 0;
+      animation: gridFade 60s linear infinite;
+    }
+
+    @keyframes gridFade {
+      0% { background-position: 0 0; }
+      100% { background-position: 100px 100px; }
     }
 
     .container {
+      position: relative;
+      z-index: 1;
       text-align: center;
       padding: 3rem 2rem;
       animation: fadeIn 1.4s ease;
@@ -72,41 +82,22 @@
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
     }
 
-    .counter {
-      margin-top: 0.5rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #444;
-      margin-bottom: 2rem;
-    }
-
     .testimonial-carousel {
       margin-top: 2rem;
       font-size: 1rem;
       color: #666;
-      height: 1.5rem;
-      position: relative;
-      overflow: hidden;
+      min-height: 1.5rem;
     }
 
-    .testimonial-carousel span {
-      position: absolute;
-      width: 100%;
-      left: 0;
-      animation: scrollTestimonials 12s linear infinite;
-      opacity: 0;
+    #typed-text::after {
+      content: '|';
+      animation: blink 1s infinite;
+      margin-left: 4px;
     }
 
-    .testimonial-carousel span:nth-child(1) { animation-delay: 0s; }
-    .testimonial-carousel span:nth-child(2) { animation-delay: 4s; }
-    .testimonial-carousel span:nth-child(3) { animation-delay: 8s; }
-
-    @keyframes scrollTestimonials {
-      0% { opacity: 0; transform: translateY(20px); }
-      5% { opacity: 1; transform: translateY(0); }
-      30% { opacity: 1; transform: translateY(0); }
-      35% { opacity: 0; transform: translateY(-20px); }
-      100% { opacity: 0; }
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
     }
 
     @keyframes fadeIn {
@@ -121,6 +112,7 @@
   </style>
 </head>
 <body>
+  <div class="grid-background"></div>
   <div class="container">
     <div class="lottie-wrapper">
       <lottie-player 
@@ -137,13 +129,51 @@
     <p>Secure your place now — no charges yet. Just one click and you're in line.</p>
     <a href="/create-checkout-session" class="button">Save Your Spot</a>
 
-    <div class="counter">🎉 48 people already signed up</div>
-
     <div class="testimonial-carousel">
-      <span>"Super easy. I didn’t even notice it was a test checkout." – Jane</span>
-      <span>"Slick and clean. Totally Apple vibes." – Marcus</span>
-      <span>"Love the no-pressure save. Great UX." – Priya</span>
+      <span id="typed-text"></span>
     </div>
   </div>
+
+  <script>
+    const testimonials = [
+      "This tool saves me at least 1–2 hours a day!",
+      "Cold email outreach has never been this easy.",
+      "The response rate increased by at least 4X, this is insane!!",
+      "The email it wrote is soooo good, exactly like what I would write myself"
+    ];
+
+    let currentTestimonial = 0;
+    let currentChar = 0;
+    const typedText = document.getElementById('typed-text');
+
+    function type() {
+      if (currentChar === 0) {
+        typedText.innerHTML = "";
+      }
+
+      if (currentChar < testimonials[currentTestimonial].length) {
+        typedText.innerHTML += testimonials[currentTestimonial].charAt(currentChar);
+        currentChar++;
+        setTimeout(type, 40);
+      } else {
+        setTimeout(erase, 2500);
+      }
+    }
+
+    function erase() {
+      if (currentChar > 0) {
+        typedText.innerHTML = testimonials[currentTestimonial].substring(0, currentChar - 1);
+        currentChar--;
+        setTimeout(erase, 20);
+      } else {
+        currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+        setTimeout(type, 200);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(type, 500);
+    });
+  </script>
 </body>
 </html>
