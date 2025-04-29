@@ -4,61 +4,146 @@
   <meta charset="UTF-8">
   <title>Reserve Your Spot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: #fff;
-      color: #000;
+      background: linear-gradient(135deg, #f2f2f2, #e6e6e6);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease infinite;
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
       text-align: center;
+      padding: 3rem 2rem;
+      animation: fadeIn 1.4s ease;
     }
 
     h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #000000, #555555);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
     }
 
     p {
-      font-size: 1.25rem;
-      color: #555;
-      margin-bottom: 2rem;
+      font-size: 1.2rem;
+      color: #333;
+      max-width: 500px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .lottie-wrapper {
+      margin-bottom: 2.5rem;
     }
 
     a.button {
-      padding: 14px 32px;
+      padding: 16px 36px;
       font-size: 1rem;
       background-color: #000;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
+      color: white;
       text-decoration: none;
-      transition: background-color 0.2s ease-in-out;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      transition: all 0.25s ease-in-out;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 2rem;
     }
 
     a.button:hover {
-      background-color: #333;
+      transform: translateY(-2px);
+      background-color: #1a1a1a;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+    }
+
+    .counter {
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-carousel {
+      margin-top: 2rem;
+      font-size: 1rem;
+      color: #666;
+      height: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonial-carousel span {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      animation: scrollTestimonials 12s linear infinite;
+      opacity: 0;
+    }
+
+    .testimonial-carousel span:nth-child(1) { animation-delay: 0s; }
+    .testimonial-carousel span:nth-child(2) { animation-delay: 4s; }
+    .testimonial-carousel span:nth-child(3) { animation-delay: 8s; }
+
+    @keyframes scrollTestimonials {
+      0% { opacity: 0; transform: translateY(20px); }
+      5% { opacity: 1; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(0); }
+      35% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 768px) {
-      h1 {
-        font-size: 2.25rem;
-      }
-
-      p {
-        font-size: 1rem;
-      }
+      h1 { font-size: 2.4rem; }
+      p { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <h1>Reserve Your Spot</h1>
-  <p>Secure your place today. No charges yet — we’ll notify you before anything.</p>
-  <a href="/create-checkout-session" class="button">Save Your Spot</a>
+  <div class="container">
+    <div class="lottie-wrapper">
+      <lottie-player 
+        src="https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json"  
+        background="transparent"  
+        speed="1"  
+        style="width: 200px; height: 200px; margin: 0 auto;"  
+        loop  
+        autoplay>
+      </lottie-player>
+    </div>
+
+    <h1>Reserve Your Spot</h1>
+    <p>Secure your place now — no charges yet. Just one click and you're in line.</p>
+    <a href="/create-checkout-session" class="button">Save Your Spot</a>
+
+    <div class="counter">🎉 48 people already signed up</div>
+
+    <div class="testimonial-carousel">
+      <span>"Super easy. I didn’t even notice it was a test checkout." – Jane</span>
+      <span>"Slick and clean. Totally Apple vibes." – Marcus</span>
+      <span>"Love the no-pressure save. Great UX." – Priya</span>
+    </div>
+  </div>
 </body>
 </html>
