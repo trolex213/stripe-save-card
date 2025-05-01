@@ -1,47 +1,29 @@
-# Flask backend server 
-# Create a Checkout Session in setup mode
-# Serve success and cancel pages
-
-import os
-import stripe
-from dotenv import load_dotenv
-from flask import Flask, redirect, request, render_template
-
-# Load env vars
-load_dotenv()
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# Stripe keys
-stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
-DOMAIN = os.getenv('DOMAIN')
-
-@app.route('/', methods=['GET'])
+@app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/create-checkout-session', methods=['GET'])
-def create_checkout_session():
-    # Optionally, create customer dynamically here
-    customer = stripe.Customer.create()
+@app.route('/api/save-user', methods=['POST'])
+def save_user():
+    data = request.get_json()
+    email = data.get("email")
+    phone = data.get("phone")
 
-    # Create Checkout Session in SETUP mode
-    checkout_session = stripe.checkout.Session.create(
-        customer=customer.id,
-        payment_method_types=['card'],
-        mode='setup',
-        success_url=DOMAIN + '/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url=DOMAIN + '/cancel',
-    )
-    return redirect(checkout_session.url, code=303)
+    # Log submitted info
+    with open("signups.txt", "a") as f:
+        f.write(f"Email: {email}, Phone: {phone}\n")
 
-@app.route('/success')
-def success():
-    return render_template('success.html')
+    return jsonify({"status": "success"}), 200
 
-@app.route('/cancel')
-def cancel():
-    return render_template('cancel.html')
+@app.route('/api/track-click', methods=['POST'])
+def track_click():
+    with open("clicks.txt", "a") as f:
+        f.write("Button clicked\n")
+    return jsonify({"status": "click recorded"}), 200
+
 
 if __name__ == '__main__':
     app.run(port=4242)
