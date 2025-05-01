@@ -232,14 +232,14 @@
     <h1>Reserve Your Access</h1>
     <p>Stop wasting 10+ hours a week on cold emails. Instantly find the right people and send personalized messages in your voice. All in under 1 minute</p>
 
-    <video controls>
+    <!-- ✅ Updated with id -->
+    <video id="demo-video" controls>
       <source src="{{ url_for('static', filename='demo.mp4') }}" type="video/mp4">
       Your browser does not support the video tag.
     </video>
 
     <a href="#" id="save-button" class="button">Save Your Spot</a>
 
-    <!-- ✅ Fixed testimonial wrapper -->
     <div class="testimonial-card-carousel">
       <div class="testimonial-card-track" id="card-carousel-track">
         <div class="testimonial-card">
@@ -255,22 +255,6 @@
           <div class="attribution">– Growth Marketer</div>
         </div>
         <div class="testimonial-card">
-          <div>Never imagined myself sending out this many high-quality cold emails in just a few minutes</div>
-          <div class="attribution">– MBA Student at Columbia</div>
-        </div>
-        <div class="testimonial-card">
-          <div>This is the best business school hack!</div>
-          <div class="attribution">– MBA Candidate at Booth</div>
-        </div>
-        <div class="testimonial-card">
-          <div>I tried this tool during beta testing, it is a REAL lifesaver, please give us more access codes!</div>
-          <div class="attribution">– Undergrad at NYU Stern</div>
-        </div>
-        <div class="testimonial-card">
-          <div>Please make this available to our school !!!</div>
-          <div class="attribution">– CS Student at UC Berkeley</div>
-        </div>
-        <div class="testimonial-card">
           <div>"The response rate increased by at least 4X. Insane!!"</div>
           <div class="attribution">– Investment Banker</div>
         </div>
@@ -280,98 +264,107 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal-backdrop" id="modal-backdrop">
-    <div class="modal">
-      <h2 style="margin-bottom: 1rem;">You're Almost In!</h2>
-      <input type="text" id="name" placeholder="Enter your name">
-      <input type="email" id="email" placeholder="Enter your email address">
-      <input type="text" id="org" placeholder="Enter your university or company">
-      <button id="submit-info">Submit</button>
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal">
+        <h2 style="margin-bottom: 1rem;">You're Almost In!</h2>
+        <input type="text" id="name" placeholder="Enter your name">
+        <input type="email" id="email" placeholder="Enter your email address">
+        <input type="text" id="org" placeholder="Enter your university or company">
+        <button id="submit-info">Submit</button>
+      </div>
     </div>
-  </div>
 
-  <div id="success-popup">
-    <div class="success-message">
-      🎉 Congrats! You're now on the waiting list.
+    <div id="success-popup">
+      <div class="success-message">
+        🎉 Congrats! You're now on the waiting list.
+      </div>
     </div>
-  </div>
 
-  <script>
-    VANTA.WAVES({
-      el: "#vanta-bg",
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      scale: 1.0,
-      scaleMobile: 1.0,
-      color: 0xbbbbbb,
-      shininess: 50,
-      waveHeight: 10,
-      waveSpeed: 0.5,
-      zoom: 1.0,
-      backgroundColor: 0xffffff
-    });
+    <script>
+      VANTA.WAVES({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        color: 0xbbbbbb,
+        shininess: 50,
+        waveHeight: 10,
+        waveSpeed: 0.5,
+        zoom: 1.0,
+        backgroundColor: 0xffffff
+      });
 
-    const modal = document.getElementById('modal-backdrop');
-    const successPopup = document.getElementById('success-popup');
+      const modal = document.getElementById('modal-backdrop');
+      const successPopup = document.getElementById('success-popup');
 
-    document.getElementById('save-button').addEventListener('click', function(e) {
-      e.preventDefault();
-      fetch("/api/track-click", { method: "POST" });
-      modal.style.display = 'flex';
-    });
+      document.getElementById('save-button').addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch("/api/track-click", { method: "POST" });
+        modal.style.display = 'flex';
+      });
 
-    document.getElementById('submit-info').addEventListener('click', function () {
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const org = document.getElementById('org').value.trim();
+      document.getElementById('submit-info').addEventListener('click', function () {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const org = document.getElementById('org').value.trim();
 
-      if (!name || !email || !org) {
-        alert("Please complete all fields.");
-        return;
+        if (!name || !email || !org) {
+          alert("Please complete all fields.");
+          return;
+        }
+
+        fetch("/api/save-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, org })
+        }).then(res => {
+          if (res.ok) {
+            modal.style.display = 'none';
+            successPopup.style.display = 'flex';
+            setTimeout(() => {
+              successPopup.style.display = 'none';
+            }, 3000);
+          } else {
+            alert("Something went wrong. Please try again.");
+          }
+        });
+      });
+
+      window.addEventListener("click", e => {
+        if (e.target === modal) modal.style.display = "none";
+      });
+
+      window.addEventListener("keydown", e => {
+        if (e.key === "Escape") modal.style.display = "none";
+      });
+
+      let currentCard = 0;
+      const cardTrack = document.getElementById('card-carousel-track');
+      const cardSlides = document.querySelectorAll('.testimonial-card');
+
+      function showCard(index) {
+        const cardWidth = cardSlides[0].offsetWidth;
+        const offset = -index * cardWidth;
+        cardTrack.style.transform = `translateX(${offset}px)`;
       }
 
-      fetch("/api/save-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, org })
-      }).then(res => {
-        if (res.ok) {
-          modal.style.display = 'none';
-          successPopup.style.display = 'flex';
-          setTimeout(() => {
-            successPopup.style.display = 'none';
-          }, 3000);
-        } else {
-          alert("Something went wrong. Please try again.");
-        }
-      });
-    });
+      setInterval(() => {
+        currentCard = (currentCard + 1) % cardSlides.length;
+        showCard(currentCard);
+      }, 4000);
 
-    window.addEventListener("click", e => {
-      if (e.target === modal) modal.style.display = "none";
-    });
-
-    window.addEventListener("keydown", e => {
-      if (e.key === "Escape") modal.style.display = "none";
-    });
-
-    let currentCard = 0;
-    const cardTrack = document.getElementById('card-carousel-track');
-    const cardSlides = document.querySelectorAll('.testimonial-card');
-
-    function showCard(index) {
-      const cardWidth = cardSlides[0].offsetWidth;
-      const offset = -index * cardWidth;
-      cardTrack.style.transform = `translateX(${offset}px)`;
-    }
-
-    setInterval(() => {
-      currentCard = (currentCard + 1) % cardSlides.length;
-      showCard(currentCard);
-    }, 4000);
-  </script>
+      // ✅ New: Track video play
+      const video = document.getElementById("demo-video");
+      if (video) {
+        video.addEventListener("play", () => {
+          fetch("/api/track-video-play", {
+            method: "POST"
+          });
+        });
+      }
+    </script>
 </body>
 </html>
